@@ -35,4 +35,18 @@ public class EngineTest {
         furnace.setLastUpdatedTimestamp(initialTime - 10000);
         assertEquals(initialTime - 10000, furnace.getLastUpdatedTimestamp());
     }
+
+    @Test
+    public void testZeroStepTicksGuard() {
+        UUID owner = UUID.randomUUID();
+        VirtualFurnace furnace = new VirtualFurnace(owner, 3);
+        furnace.setCookTime(200);
+        furnace.setTotalCookTime(200);
+        furnace.setBurnTime(0);
+
+        long now = System.currentTimeMillis();
+        furnace.setLastUpdatedTimestamp(now - 1000);
+
+        assertDoesNotThrow(() -> dev.darkblade.playerfurnaces.engine.FurnaceEngine.updateFurnaceState(furnace, null, null, null));
+    }
 }

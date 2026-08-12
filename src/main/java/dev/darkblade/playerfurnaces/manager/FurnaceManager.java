@@ -73,16 +73,31 @@ public class FurnaceManager {
 
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             for (Map<Integer, VirtualFurnace> map : cache.values()) {
+                if (map == null) continue;
                 for (VirtualFurnace f : map.values()) {
-                    FurnaceEngine.updateFurnaceState(f);
+                    if (f == null) continue;
+                    try {
+                        FurnaceEngine.updateFurnaceState(f);
+                    } catch (Throwable t) {
+                        plugin.getLogger().log(java.util.logging.Level.SEVERE, "Error updating furnace state for furnace #" + f.getFurnaceId() + " (owner: " + f.getOwnerUuid() + ")", t);
+                    }
                 }
             }
 
             for (Player player : Bukkit.getOnlinePlayers()) {
-                if (player.getOpenInventory().getTopInventory().getHolder() instanceof dev.darkblade.playerfurnaces.gui.FurnaceHubGui hubGui) {
-                    hubGui.refresh();
-                } else if (player.getOpenInventory().getTopInventory().getHolder() instanceof dev.darkblade.playerfurnaces.gui.FurnaceViewGui viewGui) {
-                    viewGui.refresh();
+                try {
+                    if (player == null || !player.isOnline()) continue;
+                    var view = player.getOpenInventory();
+                    if (view == null || view.getTopInventory() == null) continue;
+                    
+                    var holder = view.getTopInventory().getHolder();
+                    if (holder instanceof dev.darkblade.playerfurnaces.gui.FurnaceHubGui hubGui) {
+                        hubGui.refresh();
+                    } else if (holder instanceof dev.darkblade.playerfurnaces.gui.FurnaceViewGui viewGui) {
+                        viewGui.refresh();
+                    }
+                } catch (Throwable t) {
+                    plugin.getLogger().log(java.util.logging.Level.SEVERE, "Error refreshing furnace GUI for player " + (player != null ? player.getName() : "unknown"), t);
                 }
             }
         }, refreshInterval, refreshInterval);

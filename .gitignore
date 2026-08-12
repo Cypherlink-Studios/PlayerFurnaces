@@ -3,3 +3,6 @@ bin/
 .gradle/
 .vscode/
 CHANGELOG.md
+
+*.log
+*.class

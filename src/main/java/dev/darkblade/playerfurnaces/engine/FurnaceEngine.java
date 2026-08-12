@@ -124,6 +124,10 @@ public class FurnaceEngine {
             int cookNeeded = furnace.getTotalCookTime() - furnace.getCookTime();
             long stepTicks = Math.min(elapsedTicks, Math.min((long) furnace.getBurnTime(), (long) cookNeeded));
 
+            if (stepTicks <= 0) {
+                break;
+            }
+
             furnace.setCookTime(furnace.getCookTime() + (int) stepTicks);
             furnace.setBurnTime(furnace.getBurnTime() - (int) stepTicks);
             elapsedTicks -= stepTicks;

@@ -66,6 +66,34 @@ public class GuiListener implements Listener {
             int rawSlot = event.getRawSlot();
             VirtualFurnace furnace = viewGui.getFurnace();
 
+            if (event.isShiftClick()) {
+                event.setCancelled(true);
+                ItemStack clicked = event.getCurrentItem();
+                if (clicked != null && !clicked.getType().isAir()) {
+                    boolean isFuel = plugin.getFuelManager().getBurnTime(clicked) > 0;
+                    int targetSlot = isFuel ? viewGui.getFuelSlot() : viewGui.getInputSlot();
+                    if (targetSlot != -1) {
+                        ItemStack currentInSlot = inv.getItem(targetSlot);
+                        if (currentInSlot == null || currentInSlot.getType().isAir()) {
+                            inv.setItem(targetSlot, clicked.clone());
+                            clicked.setAmount(0);
+                        } else if (currentInSlot.isSimilar(clicked)) {
+                            int maxAdd = currentInSlot.getMaxStackSize() - currentInSlot.getAmount();
+                            int toAdd = Math.min(maxAdd, clicked.getAmount());
+                            if (toAdd > 0) {
+                                currentInSlot.setAmount(currentInSlot.getAmount() + toAdd);
+                                clicked.setAmount(clicked.getAmount() - toAdd);
+                            }
+                        }
+                    }
+                }
+                plugin.getServer().getScheduler().runTask(plugin, () -> {
+                    syncFurnaceFromInventory(inv, furnace, viewGui);
+                    viewGui.refresh();
+                });
+                return;
+            }
+
             if (rawSlot >= 0 && rawSlot < viewGui.getInventory().getSize()) {
                 if (rawSlot == viewGui.getCollectSlot()) {
                     event.setCancelled(true);
