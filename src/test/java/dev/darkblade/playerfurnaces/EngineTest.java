@@ -49,4 +49,16 @@ public class EngineTest {
 
         assertDoesNotThrow(() -> dev.darkblade.playerfurnaces.engine.FurnaceEngine.updateFurnaceState(furnace, null, null, null));
     }
+
+    @Test
+    public void testFutureTimestampGuard() {
+        UUID owner = UUID.randomUUID();
+        VirtualFurnace furnace = new VirtualFurnace(owner, 4);
+        long futureTime = System.currentTimeMillis() + 60000;
+        furnace.setLastUpdatedTimestamp(futureTime);
+
+        dev.darkblade.playerfurnaces.engine.FurnaceEngine.updateFurnaceState(furnace, null, null, null);
+
+        assertTrue(furnace.getLastUpdatedTimestamp() <= System.currentTimeMillis());
+    }
 }

@@ -25,7 +25,15 @@ public class FurnaceEngine {
 
     public static void updateFurnaceState(VirtualFurnace furnace, RecipeManager recipeManager, FuelManager fuelManager, ItemResolverRegistry itemResolverRegistry) {
         long now = System.currentTimeMillis();
-        long elapsedMillis = now - furnace.getLastUpdatedTimestamp();
+        long lastUpdated = furnace.getLastUpdatedTimestamp();
+
+        // Guard against future timestamps (e.g. clock adjustments or timezone shifts)
+        if (lastUpdated > now) {
+            furnace.setLastUpdatedTimestamp(now);
+            return;
+        }
+
+        long elapsedMillis = now - lastUpdated;
         long elapsedTicks = elapsedMillis / 50;
 
         if (elapsedTicks <= 0) {
@@ -33,6 +41,13 @@ public class FurnaceEngine {
         }
 
         furnace.setLastUpdatedTimestamp(now);
+
+        ItemStack lastInputChecked = null;
+        CustomRecipe cachedCustomRecipe = null;
+        CookingRecipe<?> cachedVanillaRecipe = null;
+        ItemStack cachedResult = null;
+        int cachedTotalCookTicks = 200;
+        boolean recipeResolved = false;
 
         while (elapsedTicks > 0) {
             ItemStack input = furnace.getInputItem();
@@ -45,31 +60,39 @@ public class FurnaceEngine {
                 break;
             }
 
-            CustomRecipe customRecipe = recipeManager != null ? recipeManager.findMatchingRecipe(input) : null;
-            CookingRecipe<?> vanillaRecipe = null;
-            ItemStack result = null;
-            int totalCookTicks = 200;
+            if (!recipeResolved || lastInputChecked == null || !lastInputChecked.isSimilar(input)) {
+                lastInputChecked = input.clone();
+                cachedCustomRecipe = recipeManager != null ? recipeManager.findMatchingRecipe(input) : null;
+                cachedVanillaRecipe = null;
+                cachedResult = null;
+                cachedTotalCookTicks = 200;
 
-            if (customRecipe != null) {
-                if (customRecipe.isDisabled()) {
-                    furnace.setCookTime(0);
-                    break;
-                }
-                totalCookTicks = customRecipe.getCookTimeTicks();
-                RecipeItemDefinition resDef = customRecipe.getResult();
-                if (resDef != null) {
-                    result = RecipeItemBuilder.build(resDef, itemResolverRegistry);
-                }
-            } else {
-                boolean isVanillaEnabled = recipeManager == null || (recipeManager.isVanillaSmeltingEnabled() && !recipeManager.isVanillaMaterialDisabled(input.getType()));
-                if (isVanillaEnabled) {
-                    vanillaRecipe = SmeltingManager.getSmeltingRecipe(input);
-                    if (vanillaRecipe != null) {
-                        result = vanillaRecipe.getResult();
-                        totalCookTicks = vanillaRecipe.getCookingTime();
+                if (cachedCustomRecipe != null) {
+                    if (cachedCustomRecipe.isDisabled()) {
+                        furnace.setCookTime(0);
+                        break;
+                    }
+                    cachedTotalCookTicks = cachedCustomRecipe.getCookTimeTicks();
+                    RecipeItemDefinition resDef = cachedCustomRecipe.getResult();
+                    if (resDef != null) {
+                        cachedResult = RecipeItemBuilder.build(resDef, itemResolverRegistry);
+                    }
+                } else {
+                    boolean isVanillaEnabled = recipeManager == null || (recipeManager.isVanillaSmeltingEnabled() && !recipeManager.isVanillaMaterialDisabled(input.getType()));
+                    if (isVanillaEnabled) {
+                        cachedVanillaRecipe = SmeltingManager.getSmeltingRecipe(input);
+                        if (cachedVanillaRecipe != null) {
+                            cachedResult = cachedVanillaRecipe.getResult();
+                            cachedTotalCookTicks = cachedVanillaRecipe.getCookingTime();
+                        }
                     }
                 }
+                recipeResolved = true;
             }
+
+            CustomRecipe customRecipe = cachedCustomRecipe;
+            ItemStack result = cachedResult;
+            int totalCookTicks = cachedTotalCookTicks;
 
             if (result == null) {
                 furnace.setCookTime(0);

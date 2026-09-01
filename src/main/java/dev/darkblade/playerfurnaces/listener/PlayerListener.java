@@ -1,10 +1,12 @@
 package dev.darkblade.playerfurnaces.listener;
 
 import dev.darkblade.playerfurnaces.PlayerFurnacesPlugin;
+import dev.darkblade.playerfurnaces.engine.SmeltingManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.server.ServerLoadEvent;
 
 public class PlayerListener implements Listener {
 
@@ -12,6 +14,11 @@ public class PlayerListener implements Listener {
 
     public PlayerListener(PlayerFurnacesPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    @EventHandler
+    public void onServerLoad(ServerLoadEvent event) {
+        SmeltingManager.rebuildRecipeCache();
     }
 
     @EventHandler
@@ -24,3 +31,4 @@ public class PlayerListener implements Listener {
         plugin.getFurnaceManager().unloadPlayer(event.getPlayer().getUniqueId());
     }
 }
+

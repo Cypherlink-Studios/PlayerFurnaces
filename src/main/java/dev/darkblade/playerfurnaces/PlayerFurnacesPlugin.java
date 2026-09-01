@@ -3,6 +3,7 @@ package dev.darkblade.playerfurnaces;
 import dev.darkblade.playerfurnaces.command.AdminCommand;
 import dev.darkblade.playerfurnaces.command.PlayerFurnaceCommand;
 import dev.darkblade.playerfurnaces.database.DatabaseManager;
+import dev.darkblade.playerfurnaces.engine.SmeltingManager;
 import dev.darkblade.playerfurnaces.gui.GuiListener;
 import dev.darkblade.playerfurnaces.importer.RecipeImporterRegistry;
 import dev.darkblade.playerfurnaces.importer.impl.CraftorithmRecipeImporter;
@@ -67,6 +68,14 @@ public class PlayerFurnacesPlugin extends JavaPlugin {
 
         this.furnaceManager = new FurnaceManager(this);
         this.furnaceManager.startTickTask();
+
+        // Load existing online players (handles /reload or late enable)
+        for (org.bukkit.entity.Player onlinePlayer : getServer().getOnlinePlayers()) {
+            this.furnaceManager.loadPlayer(onlinePlayer.getUniqueId());
+        }
+
+        // Initialize SmeltingManager recipe cache
+        SmeltingManager.rebuildRecipeCache();
 
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
         getServer().getPluginManager().registerEvents(new GuiListener(this), this);

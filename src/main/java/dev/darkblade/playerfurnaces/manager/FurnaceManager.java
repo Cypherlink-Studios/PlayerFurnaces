@@ -17,22 +17,38 @@ public class FurnaceManager {
 
     private final PlayerFurnacesPlugin plugin;
     private final Map<UUID, Map<Integer, VirtualFurnace>> cache = new ConcurrentHashMap<>();
+    private final Map<UUID, CompletableFuture<Map<Integer, VirtualFurnace>>> loadingFutures = new ConcurrentHashMap<>();
 
     public FurnaceManager(PlayerFurnacesPlugin plugin) {
         this.plugin = plugin;
     }
 
-    public void loadPlayer(UUID uuid) {
-        plugin.getDatabaseManager().loadFurnaces(uuid).thenAccept(list -> {
+    public CompletableFuture<Map<Integer, VirtualFurnace>> loadPlayer(UUID uuid) {
+        if (cache.containsKey(uuid)) {
+            return CompletableFuture.completedFuture(cache.get(uuid));
+        }
+
+        CompletableFuture<Map<Integer, VirtualFurnace>> existingFuture = loadingFutures.get(uuid);
+        if (existingFuture != null) {
+            return existingFuture;
+        }
+
+        CompletableFuture<Map<Integer, VirtualFurnace>> future = plugin.getDatabaseManager().loadFurnaces(uuid).thenApply(list -> {
             Map<Integer, VirtualFurnace> map = new ConcurrentHashMap<>();
             for (VirtualFurnace f : list) {
                 map.put(f.getFurnaceId(), f);
             }
             cache.put(uuid, map);
+            loadingFutures.remove(uuid);
+            return map;
         });
+
+        loadingFutures.put(uuid, future);
+        return future;
     }
 
     public void unloadPlayer(UUID uuid) {
+        loadingFutures.remove(uuid);
         Map<Integer, VirtualFurnace> map = cache.remove(uuid);
         if (map != null) {
             for (VirtualFurnace f : map.values()) {
@@ -43,7 +59,19 @@ public class FurnaceManager {
     }
 
     public VirtualFurnace getOrCreateFurnace(UUID uuid, int id) {
-        Map<Integer, VirtualFurnace> map = cache.computeIfAbsent(uuid, k -> new ConcurrentHashMap<>());
+        Map<Integer, VirtualFurnace> map = cache.get(uuid);
+        if (map == null) {
+            CompletableFuture<Map<Integer, VirtualFurnace>> future = loadingFutures.get(uuid);
+            if (future != null) {
+                try {
+                    map = future.get(1500, java.util.concurrent.TimeUnit.MILLISECONDS);
+                } catch (Exception ignored) {
+                }
+            }
+        }
+        if (map == null) {
+            map = cache.computeIfAbsent(uuid, k -> new ConcurrentHashMap<>());
+        }
         return map.computeIfAbsent(id, k -> new VirtualFurnace(uuid, id));
     }
 
