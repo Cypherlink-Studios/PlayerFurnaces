@@ -1,8 +1,5 @@
-# external-item-providers Specification
+## MODIFIED Requirements
 
-## Purpose
-TBD - created by archiving change add-recipe-overrides. Update Purpose after archive.
-## Requirements
 ### Requirement: Namespace Based Item Identifier Resolution
 The system SHALL resolve item references formatted as `namespace:item_id` by delegating to the registered provider for that namespace, supporting `craftorithm`, `executableitems` (with `executableitem` and `ei` aliases), and vanilla `minecraft` namespaces.
 
@@ -18,17 +15,6 @@ The system SHALL resolve item references formatted as `namespace:item_id` by del
 - **WHEN** a recipe specifies a vanilla material or local custom item definition without a third-party namespace
 - **THEN** the system matches using Bukkit material properties, MiniMessage display names, and PDC tags.
 
-### Requirement: Extensible ItemProvider Hook Registry
-The system SHALL maintain a registry of `ItemProvider` implementations that can be dynamically registered based on soft dependencies on external plugins (e.g. Craftorithm, ExecutableItems, Oraxen, ItemsAdder).
-
-#### Scenario: Craftorithm plugin present on server
-- **WHEN** the Craftorithm plugin is enabled on the server
-- **THEN** the `CraftorithmItemProvider` is automatically registered into the `ItemResolverRegistry`.
-
-#### Scenario: ExecutableItems plugin present on server
-- **WHEN** the ExecutableItems plugin is enabled on the server
-- **THEN** `ExecutableItemsItemProvider` is automatically registered into the `ItemResolverRegistry`.
-
 ### Requirement: Soft Dependency Auto-Registration for ExecutableItems
 The system SHALL detect the presence of the ExecutableItems plugin during startup and automatically register `ExecutableItemsItemProvider` into `ItemResolverRegistry` under `executableitems`, `executableitem`, and `ei` namespaces, while gracefully re-attempting hook initialization on demand if ExecutableItems is enabled after PlayerFurnaces.
 
@@ -39,6 +25,8 @@ The system SHALL detect the presence of the ExecutableItems plugin during startu
 #### Scenario: ExecutableItems reloaded or late-enabled
 - **WHEN** ExecutableItems is reloaded or enabled after initial startup
 - **THEN** `ExecutableItemsItemProvider` dynamically verifies its hook status and reconnects to `ExecutableItemsAPI` without requiring a server reboot.
+
+## ADDED Requirements
 
 ### Requirement: ExecutableItems Stack Inspection and Matching
 The system SHALL identify whether an in-game `ItemStack` matches a specified ExecutableItem identifier by inspecting the stack through `ExecutableItemsAPI.getExecutableItemsManager().getExecutableItem(ItemStack)` rather than strict `ItemStack.isSimilar()` comparisons against newly minted instances.
@@ -57,4 +45,3 @@ The system SHALL allow multiple items produced by a custom recipe to stack in th
 #### Scenario: Stacking consecutive ExecutableItems recipe outputs
 - **WHEN** an ExecutableItem recipe produces consecutive items into an output slot that already contains an item matching that ExecutableItem ID
 - **THEN** the system increases the stack amount up to the item's max stack size instead of halting the smelting process.
-

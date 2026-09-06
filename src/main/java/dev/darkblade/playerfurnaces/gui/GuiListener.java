@@ -7,6 +7,7 @@ import dev.darkblade.playerfurnaces.model.VirtualFurnace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -68,33 +69,19 @@ public class GuiListener implements Listener {
 
             if (event.isShiftClick()) {
                 event.setCancelled(true);
-                ItemStack clicked = event.getCurrentItem();
-                if (clicked != null && !clicked.getType().isAir()) {
-                    boolean isFuel = plugin.getFuelManager().getBurnTime(clicked) > 0;
-                    int targetSlot = isFuel ? viewGui.getFuelSlot() : viewGui.getInputSlot();
-                    if (targetSlot != -1) {
-                        ItemStack currentInSlot = inv.getItem(targetSlot);
-                        if (currentInSlot == null || currentInSlot.getType().isAir()) {
-                            inv.setItem(targetSlot, clicked.clone());
-                            clicked.setAmount(0);
-                        } else if (currentInSlot.isSimilar(clicked)) {
-                            int maxAdd = currentInSlot.getMaxStackSize() - currentInSlot.getAmount();
-                            int toAdd = Math.min(maxAdd, clicked.getAmount());
-                            if (toAdd > 0) {
-                                currentInSlot.setAmount(currentInSlot.getAmount() + toAdd);
-                                clicked.setAmount(clicked.getAmount() - toAdd);
-                            }
-                        }
-                    }
-                }
-                plugin.getServer().getScheduler().runTask(plugin, () -> {
-                    syncFurnaceFromInventory(inv, furnace, viewGui);
-                    viewGui.refresh();
-                });
+                return;
+            }
+
+            if (event.getClick() == ClickType.DOUBLE_CLICK) {
+                event.setCancelled(true);
                 return;
             }
 
             if (rawSlot >= 0 && rawSlot < viewGui.getInventory().getSize()) {
+                if (event.getClick() == ClickType.NUMBER_KEY) {
+                    event.setCancelled(true);
+                    return;
+                }
                 if (rawSlot == viewGui.getCollectSlot()) {
                     event.setCancelled(true);
                     collectOutput(player, furnace);

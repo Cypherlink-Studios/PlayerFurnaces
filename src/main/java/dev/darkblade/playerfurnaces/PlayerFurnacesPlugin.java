@@ -53,6 +53,7 @@ public class PlayerFurnacesPlugin extends JavaPlugin {
         ExecutableItemsItemProvider executableItemsProvider = new ExecutableItemsItemProvider();
         this.itemResolverRegistry.registerProvider(executableItemsProvider);
         this.itemResolverRegistry.registerAlias("ei", executableItemsProvider);
+        this.itemResolverRegistry.registerAlias("executableitem", executableItemsProvider);
 
         this.recipeImporterRegistry = new RecipeImporterRegistry();
         this.recipeImporterRegistry.registerImporter(new CraftorithmRecipeImporter());

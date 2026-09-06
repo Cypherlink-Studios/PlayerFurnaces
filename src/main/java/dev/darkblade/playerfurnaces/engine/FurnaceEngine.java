@@ -103,7 +103,16 @@ public class FurnaceEngine {
 
             ItemStack output = furnace.getOutputItem();
             if (output != null && output.getAmount() > 0) {
-                if (!output.isSimilar(result) || output.getAmount() + result.getAmount() > output.getMaxStackSize()) {
+                boolean canStack = output.isSimilar(result);
+                if (!canStack && customRecipe != null && customRecipe.getResult() != null) {
+                    String resId = customRecipe.getResult().getId();
+                    if (resId != null && resId.contains(":") && itemResolverRegistry != null) {
+                        if (itemResolverRegistry.matches(output, resId) && output.getType() == result.getType()) {
+                            canStack = true;
+                        }
+                    }
+                }
+                if (!canStack || output.getAmount() + result.getAmount() > output.getMaxStackSize()) {
                     break;
                 }
             }

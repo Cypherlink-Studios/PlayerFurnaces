@@ -5,7 +5,7 @@ plugins {
 
 
 group = "dev.darkblade"
-version = "1.7.5"
+version = "1.7.7"
 
 
 repositories {
@@ -21,6 +21,7 @@ dependencies {
 
     testImplementation("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
+    testImplementation("org.mockito:mockito-core:5.11.0")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 

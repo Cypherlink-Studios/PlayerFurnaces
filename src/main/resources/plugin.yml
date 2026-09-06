@@ -2,6 +2,7 @@ name: PlayerFurnaces
 version: ${version}
 main: dev.darkblade.playerfurnaces.PlayerFurnacesPlugin
 api-version: '1.20'
+softdepend: [ExecutableItems, SCore, Craftorithm]
 
 author: DarkBladeDev
 description: Virtual player furnaces inspired by AxVaults.
