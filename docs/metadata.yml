@@ -1,0 +1,90 @@
+id: playerfurnaces
+name: PlayerFurnaces
+description: Modular virtual player furnace system with persistent storage, custom recipes and fuels, delta-time offline calculations, and third-party item plugin integration.
+
+# Supported platforms
+platforms:
+  - paper
+  - purpur
+
+# Minecraft compatibility
+minecraft:
+  minimum: "1.20.4"
+  supported:
+    - "1.20.4"
+    - "1.21.x"
+  tested: "1.20.4"
+
+# Java Runtime compatibility
+java:
+  minimum: 21
+  recommended: 21
+
+# Folia support
+folia:
+  supported: false
+  status: unsupported
+  notes: Uses synchronized Bukkit tasks and events without Folia regional scheduler support.
+
+# Published releases
+versions:
+  - version: "1.7.7"
+    releaseDate: "2026-09-06"
+    reference: "8ec53e5"
+    downloadUrl: https://github.com/Cypherlink-Studios/PlayerFurnaces/releases
+    changelog: GUI security hardening against item theft and duplication, singular 'executableitem' alias, dynamic ExecutableItems reflection, and output slot stacking.
+    minecraft:
+      - "1.20.4"
+      - "1.21.x"
+  - version: "1.4.0"
+    releaseDate: "2026-08-02"
+    hasDocs: false
+    downloadUrl: https://github.com/Cypherlink-Studios/PlayerFurnaces/releases
+    changelog: Automated GitHub Actions release publishing and external recipe import support.
+  - version: "1.3.0"
+    releaseDate: "2026-08-02"
+    hasDocs: false
+    downloadUrl: https://github.com/Cypherlink-Studios/PlayerFurnaces/releases
+    changelog: Dynamic custom GUI menu layouts system (menus.yml).
+  - version: "1.2.0"
+    releaseDate: "2026-08-01"
+    hasDocs: false
+    downloadUrl: https://github.com/Cypherlink-Studios/PlayerFurnaces/releases
+    changelog: Recipe and fuel validation, vanilla recipe toggle, and disabled materials blacklist.
+  - version: "1.1.0"
+    releaseDate: "2026-07-31"
+    hasDocs: false
+    downloadUrl: https://github.com/Cypherlink-Studios/PlayerFurnaces/releases
+    changelog: Contextual tab completion, centralized messages, and GUI localization support.
+  - version: "1.0.0"
+    releaseDate: "2026-07-30"
+    hasDocs: false
+    downloadUrl: https://github.com/Cypherlink-Studios/PlayerFurnaces/releases
+    changelog: Initial plugin release.
+
+# Plugin dependencies
+dependencies:
+  - id: executableitems
+    name: ExecutableItems
+    type: optional
+    url: https://splugins.net/
+  - id: craftorithm
+    name: Craftorithm
+    type: optional
+    url: https://modrinth.com/plugin/craftorithm
+  - id: placeholderapi
+    name: PlaceholderAPI
+    type: optional
+    url: https://github.com/PlaceholderAPI/PlaceholderAPI
+
+# External links
+links:
+  github: https://github.com/Cypherlink-Studios/PlayerFurnaces
+
+# Documentation engine metadata
+documentation:
+  defaultLocale: es
+  locales:
+    - es
+    - en
+  repoPath: docs

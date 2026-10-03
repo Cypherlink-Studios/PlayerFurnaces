@@ -137,15 +137,27 @@ The plugin is designed with a modular, reactive architecture:
 
 ## 📚 Documentation & Wiki
 
-For detailed guides, syntax breakdowns, and integration manuals, visit our official **Wiki** in the [`docs/`](docs) directory:
+For detailed guides, syntax breakdowns, and integration manuals, visit our official documentation guides:
 
-* 📘 [Wiki Index](docs/README.md)
-* ⚙️ [Configuration Manual (`config.yml` & `messages.yml`)](docs/Configuration.md)
-* 🧪 [Custom Recipes Guide (`recipes/*.yml`)](docs/Custom-Recipes.md)
-* 🔥 [Custom Fuels Guide (`fuels/*.yml`)](docs/Custom-Fuels.md)
-* 🧩 [External Plugin Integration & ItemProvider API](docs/External-Item-Providers.md)
-* 🔑 [Commands & Permissions Reference](docs/Commands-and-Permissions.md)
-* 💾 [Database & Storage (SQLite / H2)](docs/Database-and-Storage.md)
+### 🇬🇧 English Documentation (`docs/en/`)
+* 📘 [Introduction & Architecture](docs/en/index.md)
+* ⚙️ [General Configuration (`config.yml` & `messages.yml`)](docs/en/configuration.md)
+* 🎨 [GUI Menus & Dynamic Layouts (`menus.yml`)](docs/en/gui-menus.md)
+* 🔑 [Commands & Permissions Reference](docs/en/commands-and-permissions.md)
+* 🧪 [Custom Recipes Guide (`recipes/*.yml`)](docs/en/custom-recipes.md)
+* 🔥 [Custom Fuels Guide (`fuels/*.yml`)](docs/en/custom-fuels.md)
+* 🧩 [External Item Providers & Developer API](docs/en/external-item-providers.md)
+* 💾 [Database & Storage Architecture](docs/en/database-and-storage.md)
+
+### 🇪🇸 Documentación en Español (`docs/es/`)
+* 📘 [Introducción y Arquitectura](docs/es/index.md)
+* ⚙️ [Configuración General (`config.yml` y `messages.yml`)](docs/es/configuration.md)
+* 🎨 [Menús y Layouts GUI (`menus.yml`)](docs/es/gui-menus.md)
+* 🔑 [Referencia de Comandos y Permisos](docs/es/commands-and-permissions.md)
+* 🧪 [Guía de Recetas Personalizadas (`recipes/*.yml`)](docs/es/custom-recipes.md)
+* 🔥 [Guía de Combustibles Personalizados (`fuels/*.yml`)](docs/es/custom-fuels.md)
+* 🧩 [Proveedores de Ítems Externos y API](docs/es/external-item-providers.md)
+* 💾 [Base de Datos y Persistencia](docs/es/database-and-storage.md)
 
 ---
 *Built with ❤️ for high-performance Minecraft communities.*
